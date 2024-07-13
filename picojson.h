@@ -166,15 +166,12 @@ public:
   explicit value(double n);
   explicit value(const std::string &s);
 #if __cplusplus >= 201703L
-  explicit value(const std::string_view &s);
+  explicit value(std::string_view s);
 #endif
   explicit value(const array &a);
   explicit value(const object &o);
 #if PICOJSON_USE_RVALUE_REFERENCE
   explicit value(std::string &&s);
-#if __cplusplus >= 201703L
-  explicit value(std::string_view &&s);
-#endif
   explicit value(array &&a);
   explicit value(object &&o);
 #endif
@@ -271,7 +268,7 @@ inline value::value(const std::string &s) : type_(string_type), u_() {
 }
 
 #if __cplusplus >= 201703L
-inline value::value(const std::string_view &s) : type_(string_type), u_() {
+inline value::value(std::string_view s) : type_(string_type), u_() {
   u_.string_ = new std::string(s);
 }
 #endif
@@ -288,12 +285,6 @@ inline value::value(const object &o) : type_(object_type), u_() {
 inline value::value(std::string &&s) : type_(string_type), u_() {
   u_.string_ = new std::string(std::move(s));
 }
-
-#if __cplusplus >= 201703L
-inline value::value(std::string_view &&s) : type_(string_type), u_() {
-  u_.string_ = new std::string(s);
-}
-#endif
 
 inline value::value(array &&a) : type_(array_type), u_() {
   u_.array_ = new array(std::move(a));
@@ -1158,7 +1149,7 @@ inline std::string parse(value &out, std::istream &is) {
 }
 
 #if __cplusplus >= 201703L
-inline std::string parse(value &out, const std::string_view &s) {
+inline std::string parse(value &out, std::string_view s) {
   std::string err;
   parse(out, s.begin(), s.end(), &err);
   return err;
